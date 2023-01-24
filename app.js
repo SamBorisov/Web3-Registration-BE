@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require('cors');
+const jwt = require ('jsonwebtoken');
 
 //Setting up server
 const corsOptions = {
@@ -45,6 +46,10 @@ const userSchema = new mongoose.Schema({
         required: [true, "Please provide an address"],
         unique: [true, "Address linked to another account"],
     },
+    token: {
+        type: String,
+        required: [true, "No JWT token"],
+    },
 })
 
 
@@ -58,7 +63,6 @@ const userSample = new User({
     name: "Bob",
     email: "bob1@abv.bg",
     username: "coolbob1",
-    address: "hjhd81hd9jd19j1jd1w9jdk0w1dj"
 })
 // userSample.save();
 
@@ -126,14 +130,17 @@ app.route("/register")
     });
 
 
-//Logout
-app.route("/logout")
-    .get((req,res) => {
+//JWT
+app.post('/create-jwt', (req, res) => {
 
-        Logged = false;
-        console.log(Logged)
+    res.set('Access-Control-Allow-Origin', '*');
 
-    });
+    const { address } = req.body;
+    const token = jwt.sign({ address }, 'secretkey');
+
+    const user = new User({name: "Bob", email: "bob1@abv.bg", username: "coolbob1", address, token });
+    user.save();
+});
 
 
 //Port
