@@ -34,35 +34,28 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Please provide an Email!"],
-        unique: [true, "Email Exist"],
+      //  unique: [true, "Email Exist"],
     },
     username: {
         type: String,
         required: [true, "Please provide a username"],
-        unique: [true, "Username Taken"],
+      //  unique: [true, "Username Taken"],
     },
     address: {
         type: String,
         required: [true, "Please provide an address"],
-        unique: [true, "Address linked to another account"],
-    },
-    token: {
-        type: String,
-        required: [true, "No JWT token"],
+       // unique: [true, "Address linked to another account"],
     },
 })
 
 
 const User = mongoose.model("User", userSchema);
 
-//variables
-
-let Logged = true;
-
 const userSample = new User({
     name: "Bob",
     email: "bob1@abv.bg",
     username: "coolbob1",
+    address:"0x0asfjasfjasf"
 })
 // userSample.save();
 
@@ -70,8 +63,7 @@ const userSample = new User({
 //index page
 app.get('/', function (req, res) {
 
-    //res.send({ message: "Hello from server!" + Logged })
-    res.send(Logged)
+    // -----------------------------  //
 
 });
 
@@ -82,20 +74,20 @@ app.route("/login")
 
         res.set('Access-Control-Allow-Origin', '*');
 
-        usernameI = req.body.username;
         addressI = req.body.address;
 
-        User.findOne({username: usernameI, address: addressI}, (err, result) => {
+        User.findOne({address: addressI}, (err, result) => {
             if (result) {
+
                 console.log("userFound")
-                Logged = true;
-                console.log(Logged)
+                const token = jwt.sign({result}, 'secretkey');
+                res.json({ token });
+
             } else if (err) {
                 console.log(err)
             } else {
                 res.send("not found")
             }
-
         })
 
         console.log(JSON.stringify(req.body))
@@ -105,12 +97,11 @@ app.route("/login")
 //Register
 app.route("/register")
     .get((req,res) => {
-        return Logged;
+        console.log("get reg")
     })
     .post((req, res) => {
 
         res.set('Access-Control-Allow-Origin', '*');
-
 
         nameI =req.body.name;
         emailI = req.body.email;
@@ -121,7 +112,7 @@ app.route("/register")
             name: nameI,
             email: emailI,
             username: usernameI,
-            address: addressI
+            address: addressI,
         })
         createUser.save();
 
@@ -130,17 +121,7 @@ app.route("/register")
     });
 
 
-//JWT
-app.post('/create-jwt', (req, res) => {
 
-    res.set('Access-Control-Allow-Origin', '*');
-
-    const { address } = req.body;
-    const token = jwt.sign({ address }, 'secretkey');
-
-    const user = new User({name: "Bob", email: "bob1@abv.bg", username: "coolbob1", address, token });
-    user.save();
-});
 
 
 //Port
