@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require('cors');
 const jwt = require ('jsonwebtoken');
+const session = require('express-session');
 
 //Setting up server
 const corsOptions = {
@@ -21,6 +22,11 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next();
 });
+app.use(session({
+    secret: 'secretkey',
+    resave: false,
+    saveUninitialized: true,
+}));
 
 mongoose.set('strictQuery', false);
 mongoose.connect("mongodb://127.0.0.1:27017/UsersDB", { useNewUrlParser: true })
@@ -55,7 +61,7 @@ const userSample = new User({
     name: "Bob",
     email: "bob1@abv.bg",
     username: "coolbob1",
-    address:"0x0asfjasfjasf"
+    address:"0x0hecuwfh4c8h2f28hccu4ruxc"
 })
 // userSample.save();
 
@@ -63,7 +69,26 @@ const userSample = new User({
 //index page
 app.get('/', function (req, res) {
 
-    // -----------------------------  //
+    // addI = "0x71c7293bf43c7f88881fa6cef1ec8a77ab397e4e";
+
+    // User.findOne({address: addI}, (err, result) => {
+    //     if (result) {
+
+    //         res.send(result)
+
+    //     } else if (err) {
+    //         console.log(err)
+    //     } else {
+    //         res.send("not found")
+    //         console.log("not found")
+    //     }
+    // })
+
+    if (req.session.user) {
+        res.send(req.session.user);
+    } else {
+        res.send('No user found in session');
+    }
 
 });
 
@@ -74,22 +99,28 @@ app.route("/login")
 
         res.set('Access-Control-Allow-Origin', '*');
 
-        addressI = req.body.address;
+        addI = req.body.address.toLowerCase();
+        sigI = req.body.signature;
 
-        User.findOne({address: addressI}, (err, result) => {
-            if (result) {
+        if(sigI) {
+     
+            User.findOne({address: addI}, (err, result) => {
+                if (result) {
+    
+                    console.log("userFound")
+                    const token = jwt.sign({result}, 'secretkey');
+                    res.json({ token });
 
-                console.log("userFound")
-                const token = jwt.sign({result}, 'secretkey');
-                res.json({ token });
-
-            } else if (err) {
-                console.log(err)
-            } else {
-                res.send("not found")
-            }
-        })
-
+                   
+    
+                } else if (err) {
+                    console.log(err)
+                } else {
+                    res.send("not found")
+                    console.log("not found")
+                }
+            })
+        }   
         console.log(JSON.stringify(req.body))
     });
 
@@ -120,7 +151,36 @@ app.route("/register")
 
     });
 
+app.route("/profile")
+    .get((req,res) => {
+        res.set('Access-Control-Allow-Origin', '*');
 
+        const token = req.headers.authorization.split(" ")[1];
+        jwt.verify(token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.sendStatus(403);
+            
+            } else {
+                addI = authData.result.address.toLowerCase();
+                User.findOne({address: addI}, (err, result) => {
+                    if (result) {
+                        req.session.user = result;
+                        res.send(JSON.stringify(result));
+        
+                    } else if (err) {
+                        console.log(err)
+                    } else {
+                        res.send("{}")
+                        console.log("not found")
+                    }
+                })
+        
+                console.log("profile" + JSON.stringify(req.body));
+            }
+        });
+        
+
+    });
 
 
 
