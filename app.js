@@ -114,15 +114,39 @@ app.route("/register")
         usernameI = req.body.username;
         addressI = req.body.address;
 
-        const createUser = new User({
-            name: nameI,
-            email: emailI,
-            username: usernameI,
-            address: addressI,
-        })
-        createUser.save();
+        User.findOne({address: addressI}, (err, result) => {
+            if (result) {
 
-        console.log("User created" + JSON.stringify(req.body));
+                console.log("This address aleady has registration")
+                res.send({serverRes: "This address aleady has registration"})
+           
+            } else if (err) {
+                console.log(err)
+                res.send(err)
+            } else {
+
+                const createUser = new User({
+                    name: nameI,
+                    email: emailI,
+                    username: usernameI,
+                    address: addressI,
+                })
+                createUser.save(function (err) {
+                    if (err){
+                        res.send({serverRes: err})
+                        console.log(err);
+                    } else {
+                        res.send({serverRes: "User Created"})
+                        console.log("User created" + JSON.stringify(req.body));
+                    }
+                });
+            }
+        }) 
+
+        
+
+ 
+        
 
     });
 
