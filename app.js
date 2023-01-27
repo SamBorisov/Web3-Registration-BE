@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const jwt = require ('jsonwebtoken');
 const session = require('express-session');
+const LocalStorage = require('node-localstorage').LocalStorage;
+const localStorage = new LocalStorage('./scratch');
 
 //Setting up server
 const corsOptions = {
@@ -40,17 +42,17 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Please provide an Email!"],
-      //  unique: [true, "Email Exist"],
+        unique: [true, "Email Exist"],
     },
     username: {
         type: String,
         required: [true, "Please provide a username"],
-      //  unique: [true, "Username Taken"],
+        unique: [true, "Username Taken"],
     },
     address: {
         type: String,
         required: [true, "Please provide an address"],
-       // unique: [true, "Address linked to another account"],
+        unique: [true, "Address linked to another account"],
     },
 })
 
@@ -64,33 +66,6 @@ const userSample = new User({
     address:"0x0hecuwfh4c8h2f28hccu4ruxc"
 })
 // userSample.save();
-
-
-//index page
-app.get('/', function (req, res) {
-
-    // addI = "0x71c7293bf43c7f88881fa6cef1ec8a77ab397e4e";
-
-    // User.findOne({address: addI}, (err, result) => {
-    //     if (result) {
-
-    //         res.send(result)
-
-    //     } else if (err) {
-    //         console.log(err)
-    //     } else {
-    //         res.send("not found")
-    //         console.log("not found")
-    //     }
-    // })
-
-    if (req.session.user) {
-        res.send(req.session.user);
-    } else {
-        res.send('No user found in session');
-    }
-
-});
 
 
 // Login 
@@ -151,6 +126,7 @@ app.route("/register")
 
     });
 
+    // Profile 
 app.route("/profile")
     .get((req,res) => {
         res.set('Access-Control-Allow-Origin', '*');
@@ -174,14 +150,26 @@ app.route("/profile")
                         console.log("not found")
                     }
                 })
-        
                 console.log("profile" + JSON.stringify(req.body));
             }
         });
-        
-
     });
 
+//logout button
+app.route("/logout")
+    .get((req,res) => {
+        res.set('Access-Control-Allow-Origin', '*');
+
+        req.session.destroy(function(err) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.clearCookie("token");
+              res.send("Logged out successfully");
+              console.log("Clear");
+            }
+          });        
+    })
 
 
 //Port
