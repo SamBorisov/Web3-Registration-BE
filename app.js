@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const jwt = require ('jsonwebtoken');
 const session = require('express-session');
-const LocalStorage = require('node-localstorage').LocalStorage;
-const localStorage = new LocalStorage('./scratch');
+
+
 
 //Setting up server
 const corsOptions = {
@@ -141,13 +141,7 @@ app.route("/register")
                     }
                 });
             }
-        }) 
-
-        
-
- 
-        
-
+        })  
     });
 
     // Profile 
@@ -174,7 +168,6 @@ app.route("/profile")
                         console.log("not found")
                     }
                 })
-                console.log("profile" + JSON.stringify(req.body));
             }
         });
     });
@@ -195,6 +188,33 @@ app.route("/logout")
           });        
     })
 
+// delete 
+app.route("/delete")
+    .post((req, res) => {
+
+        res.set('Access-Control-Allow-Origin', '*');
+
+        addI = req.body.address.toLowerCase();
+        sigI = req.body.signature;
+
+        if(sigI) {
+     
+            User.deleteOne({address: addI}, (err, result) => {
+                if (result) {
+    
+                    console.log("user deleted")
+                    res.send("User Deleted") 
+    
+                } else if (err) {
+                    console.log(err)
+                } else {
+                    res.send("not found")
+                    console.log("not found")
+                }
+            })
+        }   
+        console.log(JSON.stringify(req.body))
+    });
 
 //Port
 app.listen(4000, () => console.log(`Server is running on port 4000.`));
