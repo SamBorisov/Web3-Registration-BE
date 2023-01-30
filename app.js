@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require('cors');
 const jwt = require ('jsonwebtoken');
 const session = require('express-session');
+require('dotenv').config()
 
 
 
@@ -25,13 +26,13 @@ app.use(function (req, res, next) {
     next();
 });
 app.use(session({
-    secret: 'secretkey',
+    secret: process.env.SECRETKEY,
     resave: false,
     saveUninitialized: true,
 }));
 
 mongoose.set('strictQuery', false);
-mongoose.connect("mongodb://127.0.0.1:27017/UsersDB", { useNewUrlParser: true })
+mongoose.connect("mongodb+srv://"+process.env.USERDB+":"+process.env.PASSDB+"@socialapp.ds4zn.mongodb.net/UsersDB", { useNewUrlParser: true })
 
 //schemas
 const userSchema = new mongoose.Schema({
@@ -83,7 +84,7 @@ app.route("/login")
                 if (result) {
     
                     console.log("userFound")
-                    const token = jwt.sign({result}, 'secretkey');
+                    const token = jwt.sign({result}, process.env.SECRETKEY);
                     res.json({ token });
 
                    
@@ -138,6 +139,7 @@ app.route("/register")
                     } else {
                         res.send({serverRes: "User Created"})
                         console.log("User created" + JSON.stringify(req.body));
+                        
                     }
                 });
             }
@@ -150,7 +152,7 @@ app.route("/profile")
         res.set('Access-Control-Allow-Origin', '*');
 
         const token = req.headers.authorization.split(" ")[1];
-        jwt.verify(token, 'secretkey', (err, authData) => {
+        jwt.verify(token, process.env.SECRETKEY, (err, authData) => {
             if(err) {
                 res.sendStatus(403);
             
