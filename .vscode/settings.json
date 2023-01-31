@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/5314463e-2fcf-4511-a8ee-db852021ac74/AppServices/subscriptions/5314463e-2fcf-4511-a8ee-db852021ac74/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/Web3-Registration-BE",
+    "appService.deploySubpath": "."
+}

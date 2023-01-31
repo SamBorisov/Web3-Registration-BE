@@ -5,7 +5,7 @@ const cors = require('cors');
 const jwt = require ('jsonwebtoken');
 const session = require('express-session');
 require('dotenv').config()
-
+const port = process.env.PORT || 4000
 
 
 //Setting up server
@@ -68,6 +68,11 @@ const userSample = new User({
 })
 // userSample.save();
 
+
+app.route("/")
+    .get((req,res) => {
+        res.send("Web 3 Registration Back End")
+});
 
 // Login 
 app.route("/login")
@@ -150,6 +155,7 @@ app.route("/register")
 app.route("/profile")
     .get((req,res) => {
         res.set('Access-Control-Allow-Origin', '*');
+        try {
 
         const token = req.headers.authorization.split(" ")[1];
         jwt.verify(token, process.env.SECRETKEY, (err, authData) => {
@@ -171,7 +177,13 @@ app.route("/profile")
                     }
                 })
             }
-        });
+            });
+        } catch (error) {
+            console.error(error);
+            res.sendStatus(500);
+
+        }
+      
     });
 
 //logout button
@@ -219,4 +231,4 @@ app.route("/delete")
     });
 
 //Port
-app.listen(4000, () => console.log(`Server is running on port 4000.`));
+app.listen(port, () => console.log(`Server is running on port ${port}.`));
