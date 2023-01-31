@@ -10,7 +10,7 @@ require('dotenv').config()
 
 //Setting up server
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    hostname: 'https://web3-registration-fe.pages.dev/',
     optionsSuccessStatus: 200, // For legacy browser support
     methods: "GET, PUT, POST"
 }
