@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const User = require('../models/user');
-require('dotenv').config()
 
 
 // delete user
