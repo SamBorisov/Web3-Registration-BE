@@ -28,16 +28,14 @@ router.route("/")
     
                     console.log("userFound")
                     const token = jwt.sign({result}, process.env.SECRETKEY);
-                    res.json({ token });
-
-                   
+                    res.json({ token });                 
     
                 } else if (err) {
                     console.log(err)
                     res.send(err)
                 } else {
-                    res.send("not found")
-                    console.log("not found")
+                    res.status(401).send();
+                    console.log("user not found")
                 }
             })
         } else {
