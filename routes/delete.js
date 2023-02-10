@@ -11,7 +11,7 @@ router.route("/")
 
         addI = req.body.address.toLowerCase();
         sigI = req.body.signature.toLowerCase();
-        const message = "Do you want to Log In?"
+        const message = "Do you want to Delete your registation and data?"
 
         //recovering the address for validation of the signature
         const recovered = sigUtil.recoverPersonalSignature({
