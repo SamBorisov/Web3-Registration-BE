@@ -7,7 +7,7 @@ require('dotenv').config()
 const port = process.env.PORT || 4000
 
 
-//Routs
+//Importing routs 
 const deleteRoute = require('./routes/delete');
 const logoutRoute = require('./routes/logout');
 const loginRoute = require('./routes/login');

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const jwt = require ('jsonwebtoken');
+const sigUtil = require('eth-sig-util');
 
 
 // Login user with signature
@@ -11,9 +12,16 @@ router.route("/")
         res.set('Access-Control-Allow-Origin', '*');
 
         addI = req.body.address.toLowerCase();
-        sigI = req.body.signature;
+        sigI = req.body.signature.toLowerCase();
+        const message = "Do you want to Log In?"
+        
+        //recovering the address for validation of the signature
+        const recovered = sigUtil.recoverPersonalSignature({
+            data: message,
+            sig: sigI
+          })
 
-        if(sigI) {
+        if(recovered.toLowerCase() === addI) {
      
             User.findOne({address: addI}, (err, result) => {
                 if (result) {
@@ -26,12 +34,15 @@ router.route("/")
     
                 } else if (err) {
                     console.log(err)
+                    res.send(err)
                 } else {
                     res.send("not found")
                     console.log("not found")
                 }
             })
-        }   
+        } else {
+            res.send("Invalid signature")
+        }
         console.log(JSON.stringify(req.body))
     });
 
