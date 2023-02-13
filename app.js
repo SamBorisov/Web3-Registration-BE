@@ -17,7 +17,7 @@ const profileRoute = require('./routes/profile');
 
 //Setting up server
 const corsOptions = {
-    hostname: 'http://localhost:3000/',
+    hostname: 'https://web3-registration-fe.pages.dev/',
     optionsSuccessStatus: 200, // For legacy browser support
     methods: "GET, PUT, POST"
 }
