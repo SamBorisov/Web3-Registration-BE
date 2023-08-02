@@ -21,15 +21,21 @@ JWT token must be returned to the user.
 ● Return user information (To be used on the My Profile page)
 ### Frontend
 It must have the following pages:
+<br>
 ● Register page
+<br>
 Initially, the user connects his wallet.
 Then the user fills in a form - name, email, username.
 On successful registration, the user is redirected to the Login page.
+<br>
 ● Login Page
+<br>
 A user connects his wallet.
 A login request to the backend is made.
 On successful login, the user is redirected to the My Profile page
+<br>
 ● My Profile page
+<br>
 Authenticated request for user data is made.
 Data is visualized on the My Profile page.
 Implement an exit button that logout the user.
