@@ -14,10 +14,13 @@ It must be a basic React Application.
 ## Functionalities
 ### Backend
 It must handle the following tasks:
+<br>
 ● Register a new user and store its base data in the DB - name, email, username, and
 blockchain address.
+<br>
 ● Sign in the registered user with blockchain wallet signature as credentials
 JWT token must be returned to the user.
+<br>
 ● Return user information (To be used on the My Profile page)
 ### Frontend
 It must have the following pages:
